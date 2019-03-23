@@ -6,18 +6,19 @@
     android:padding="10dp"
     tools:context="com.example.android.soaptesting.MainActivity">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textBox"
-        android:layout_marginBottom="5dp"/>
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Find Square"
+        android:text="Show Complaints"
         android:id="@+id/button"
-        android:layout_below="@+id/textBox"
+        android:layout_marginBottom="5dp"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recycler Test"
+        android:id="@+id/button1"
+        android:onClick="Recycler"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="5dp"/>
 
     <TextView

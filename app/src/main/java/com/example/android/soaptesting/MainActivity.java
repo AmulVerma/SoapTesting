@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
     Button button;
     TextView text;
 
-    private final String URL = "http://grphelpapp.in/supervisorwebservice.asmx?WSDL";
+    private final String URL = "http://grphelpapp.in/supervisorwebservice.asmx";
     private static final String SOAP_ACTION = "http://grphelpapp.in/GetGRPComplaint";
     private static final String METHOD_NAME = "GetGRPComplaint/";
 
@@ -199,88 +199,65 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // new CallWebService().execute();
+                // new CallWebService().execute();
 
                 //GetGRPComAsyncTask getGRPComAsyncTask = new GetGRPComAsyncTask();
                 //getGRPComAsyncTask.execute("","Action Completed","","","");
 
-                   GetChallanInfoInfoAsyncTask getChallanInfoInfoAsyncTask = new GetChallanInfoInfoAsyncTask();
-                 getChallanInfoInfoAsyncTask.execute("","Action Completed","","","");
+                GetChallanInfoInfoAsyncTask getChallanInfoInfoAsyncTask = new GetChallanInfoInfoAsyncTask();
+                getChallanInfoInfoAsyncTask.execute("", "Action Completed", "", "", "");
 
             }
         });
 
     }
+
     public void Recycler(View view) {
         Intent intent = new Intent(this, RecyclerComplaints.class);
         startActivity(intent);
     }
 
-    class CallWebService extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPostExecute(String s) {
-
-            text.setText("Soap output " + s);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String result = "";
-
-            SoapObject soapObject = new SoapObject(NAMESPACE, METHOD_NAME);
-            // params[0]=textBox.getText().toString();
-            //PropertyInfo propertyInfo = new PropertyInfo();
-            //propertyInfo.setName("GetGRPComplaint");
-            //propertyInfo.setValue(params[0]);
-            //propertyInfo.setType(String.class);
-            //soapObject.addProperty(propertyInfo);
-            soapObject.addProperty("status", "Action Completed");
-            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            envelope.setOutputSoapObject(soapObject);
-            //adding new fields
-            Log.v("checking", "running" + envelope);
-            envelope.dotNet = true;
-
-            HttpTransportSE httpTransportSE = new HttpTransportSE(URL);
-            Object Response = null;
-            try {
-                httpTransportSE.call(SOAP_ACTION, envelope);
-                //SoapPrimitive soapPrimitive = (SoapPrimitive)envelope.getResponse();
-                SoapPrimitive soapPrimitive = (SoapPrimitive) envelope.getResponse();
-
-                //Response=envelope.getResponse();
-                result = soapPrimitive.toString();
-                Log.d("checking", soapPrimitive.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-    }
     //***********************************************************************************************************************
-
-
-
-
-
-
     ProgressDialog pg;
 
     public class GetChallanInfoInfoAsyncTask extends AsyncTask<String, String, String> {
-        String UserRating = "";
+
 
         @Override
         protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+            //mDialog.show();
+        }
+
+       /* protected void onPreExecute() {
             // TODO Auto-generated method stub
             super.onPreExecute();
             pg = new ProgressDialog(MainActivity.this);
             pg.show();
             pg.setCancelable(false);
             pg.setMessage("Please Wait...");
-        }
+        }*/
 
         @Override
         protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+            String stateid = params[0];
+            String status = params[1];
+            String category = params[2];
+            String fromdate = params[3];
+            String todate = params[4];
+
+            Log.e("stateid", stateid+"");
+            Log.e("status", status);
+            Log.e("category", category+"");
+            Log.e("fromdate", fromdate+"");
+            Log.e("todate", todate+"");
+
+
+            return CallApiForGetDonatedServer(stateid,status,category,fromdate,todate);
+        }
+      /*  protected String doInBackground(String... params) {
             // TODO Auto-generated method stub
 
             String stateid = params[0];
@@ -291,11 +268,33 @@ public class MainActivity extends AppCompatActivity {
 
 
             Log.e("ID", status);
-            return challanInfoFromServer(stateid,status,category,fromdate,todate);
-        }
+            return challanInfoFromServer(stateid, status, category, fromdate, todate);
+        }*/
 
         @Override
         protected void onPostExecute(String result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+        /*if (mDialog != null) {
+            try {
+                mDialog.dismiss();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }*/
+
+
+
+            if (!result.toString().trim().contains("fail")) {
+
+                Log.e("result here",result);
+
+                //  parseDonatedListResponse(result);
+
+
+            }
+        }
+    }
+        /*protected void onPostExecute(String result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
             if (pg != null) {
@@ -325,65 +324,54 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //  finish();
             }
-        }
-
-        public String challanInfoFromServer(String stateid, String status, String category, String fromdate, String todate ) {
+        }*/
+        public String CallApiForGetDonatedServer(String stateid, String CityId, String category, String fromdate, String todate) {
 
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 
-//            PropertyInfo Complaints = new PropertyInfo();
-//            Complaints.setName("GetGRPComplaint");  // earlier GRPId
-//           // Complaints.setValue(status);
-//           // request.addProperty(Complaints);
-//            request.addProperty("status",params[1]);
-//            request.addProperty("stateid",params[0]);
-//            request.addProperty("fromdate",params[3]);
-//            request.addProperty("todate",params[4]);
-//            request.addProperty("category",params[2]);
+            PropertyInfo stateiD = new PropertyInfo();
+            // CITYId.setName(ParameterUtill.CityId);
+            stateiD.setName("stateid");
+            stateiD.setValue(stateid);
+            request.addProperty(stateiD);
 
+            PropertyInfo CITYId = new PropertyInfo();
+            // CITYId.setName(ParameterUtill.CityId);
+            CITYId.setName("status");
+            CITYId.setValue("Action Completed");
+            request.addProperty(CITYId);
 
-            PropertyInfo stateID = new PropertyInfo();
-            stateID.setName("stateid");
-            stateID.setValue(stateid);
-            request.addProperty(stateID);
+            PropertyInfo categorY = new PropertyInfo();
+            // CITYId.setName(ParameterUtill.CityId);
+            categorY.setName("category");
+            categorY.setValue(category);
+            request.addProperty(categorY);
 
+            PropertyInfo fromdatE = new PropertyInfo();
+            // CITYId.setName(ParameterUtill.CityId);
+            fromdatE.setName("fromdate");
+            fromdatE.setValue(fromdate);
+            request.addProperty(fromdatE);
 
-            PropertyInfo STATUS = new PropertyInfo();
-            STATUS.setName("status");
-            STATUS.setValue(status);
-            request.addProperty(STATUS);
-
-            PropertyInfo CATEGORY = new PropertyInfo();
-            CATEGORY.setName("category");
-            CATEGORY.setValue(category);
-            request.addProperty(CATEGORY);
-
-
-            PropertyInfo fromDATE = new PropertyInfo();
-            fromDATE.setName("fromdate");
-            fromDATE.setValue(fromdate);
-            request.addProperty(fromDATE);
-
-
-            PropertyInfo toDATE = new PropertyInfo();
-            toDATE.setName("todate");
-            toDATE.setValue(todate);
-            request.addProperty(toDATE);
-
-
+            PropertyInfo todatE = new PropertyInfo();
+            // CITYId.setName(ParameterUtill.CityId);
+            todatE.setName("todate");
+            todatE.setValue(todate);
+            request.addProperty(todatE);
 
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.dotNet = true;
             envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL, 60000);
 
             try {
                 androidHttpTransport.call(SOAP_ACTION, envelope);
-                // LoggerUtil.e("Response","IN TRY");
+                //LoggerUtil.e("Response","IN TRY");
                 SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
                 String res = response.toString();
                 Log.e("Response", res + "");
+
                 return res;
             } catch (IOException e) {
                 Log.e("IOException", e.toString());
@@ -392,17 +380,85 @@ public class MainActivity extends AppCompatActivity {
                 // TODO Auto-generated catch block
                 Log.e("Exception", e.toString());
             }
-            return "[{\"result\":\"No Record Found\"}]";
+            return "{\"Result\":\"No Record Found\"[{\"Result\":\"No Record Found\"}]}";
         }
+
+    Handler handler = new Handler() {
+
+        public void handleMessage(android.os.Message msg) {
+            if (msg.what == 0) {
+                Log.e("No record",msg.toString());
+            }
+            if (msg.what == 1) {
+                Log.e("try again",msg.toString());
+            }
+        }
+
+    };
+
+
+
+
+   /* public String challanInfoFromServer(String stateid, String status, String category, String fromdate, String todate) {
+
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+
+        PropertyInfo stateID = new PropertyInfo();
+        stateID.setName("stateid");
+        stateID.setValue(stateid);
+        request.addProperty(stateID);
+
+
+        PropertyInfo STATUS = new PropertyInfo();
+        STATUS.setName("status");
+        STATUS.setValue(status);
+        request.addProperty(STATUS);
+
+        PropertyInfo CATEGORY = new PropertyInfo();
+        CATEGORY.setName("category");
+        CATEGORY.setValue(category);
+        request.addProperty(CATEGORY);
+
+
+        PropertyInfo fromDATE = new PropertyInfo();
+        fromDATE.setName("fromdate");
+        fromDATE.setValue(fromdate);
+        request.addProperty(fromDATE);
+
+
+        PropertyInfo toDATE = new PropertyInfo();
+        toDATE.setName("todate");
+        toDATE.setValue(todate);
+        request.addProperty(toDATE);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL, 60000);
+        try {
+            androidHttpTransport.call(SOAP_ACTION, envelope);
+            // LoggerUtil.e("Response","IN TRY");
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            String res = response.toString();
+            Log.e("Response", res + "");
+            return res;
+        } catch (IOException e) {
+            Log.e("IOException", e.toString());
+
+        } catch (XmlPullParserException e) {
+            // TODO Auto-generated catch block
+            Log.e("Exception", e.toString());
+        }
+        return "[{\"result\":\"No Record Found\"}]";
     }
+*/
 
+    //Call API +++++++++++++++++++++++++++++++
 
-
- //Call API +++++++++++++++++++++++++++++++
-
-ProgressDialog mDialog;
-
-
+    ProgressDialog mDialog;
+}
+///////////////////////////////////////////////////////////////////////////////////
+/*
 
     public class GetGRPComAsyncTask extends AsyncTask<String, String, String> {
 
@@ -464,9 +520,11 @@ ProgressDialog mDialog;
                 }
             }
         }
+*/
+//////////////////////////////////////////////////////////////////////////
 
-
-        @SuppressLint("LongLogTag")
+/////////////////////////***********************//////////////////////////////////////
+/*      @SuppressLint("LongLogTag")
         public String CallApiForGetDonatedServer(String stateid, String status, String category, String fromdate, String todate) {
 
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
@@ -504,7 +562,7 @@ ProgressDialog mDialog;
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.dotNet = true;
             envelope.setOutputSoapObject(request);
-            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(URL, 60000);
 
             try {
                 androidHttpTransport.call(SOAP_ACTION, envelope);
@@ -541,7 +599,10 @@ ProgressDialog mDialog;
 
 
 
-}
+}*/
+///////////////////////////////////////////////////////////////////*****************/////////
+
+
     //parse news response and get user dto
 //change this parsing code according to server response
    /* public void parseChallanInfoResponse(String resp) {
